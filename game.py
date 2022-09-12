@@ -1,72 +1,73 @@
-from random import randint, shuffle, sample
+from random import sample
+
 
 class Bag:
 
     def __init__(self):
-        self.number = sample(range(1, 91), 90)
+        self.numbers = sample(range(1, 91), 90)
 
     def next(self):
-        if self.number:
-            return self.number.pop()
+        if self.numbers:
+            return self.numbers.pop()
         raise Exception('Мешок пуст!')
 
     def stats(self):
-        print(f'В мешке {len(self.number)} боченков.')
+        print(f'В мешке {len(self.numbers)} боченков.')
+
 
 class RandomCard:
 
-    #карточка с номерами бочонков и мест
     def __init__(self, name):
         self.player_name = name
         # генерация чисел для карточки
-        self.card_number = sample(range(1, 91), 15)
+        self.card_numbers = sample(range(1, 91), 15)
         # генерация мест для этих чисел на карточке
         self.place_idx = sample(range(0, 9), 5) + sample(range(9, 18), 5) + sample(range(18, 27), 5)
         # print(place_idx)
 
         # словарь {№места: число}
-        self.randomcard = {key: 0 for key in range(27)}
-        for i in range(len(self.card_number)):
-            self.randomcard[self.place_idx[i]] = self.card_number[i]
+        self.card = {key: 0 for key in range(27)}
+        for i in range(len(self.card_numbers)):
+            self.card[self.place_idx[i]] = self.card_numbers[i]
 
-        # модификация в словаре
-        def modify(self, num):
-            del_idx = self.place_idx[self.card_number.index(num)]
-            self.randomcard[del_idx] = None
+    def modify(self, number):
+        del_idx = self.place_idx[self.card_numbers.index(number)]
+        self.card[del_idx] = None
 
-        def show(self):
+    def show(self):
 
-            # печать карточки
-            print(f'\n-{self.player_name}{"-" * (26 - len(self.player_name) - 1)}')
-            for i in range(len(self.randomcard)):
-                if self.randomcard[i] is None:
-                    print('--', end='')
-                elif self.randomcard[i] == 0:
-                    print('  ', end='')
-                elif self.randomcard[i] < 10:
-                    print(f' {self.randomcard[i]}', end='')
-                else:
-                    print(self.randomcard[i], end='')
-                print() if i + 1 in (9, 18, 27) else print(' ', end='')
-            print('-' * 26, end='\n')
+        # печать карточки
+        print(f'\n-{self.player_name}{"-" * (26 - len(self.player_name) - 1)}')
+        for i in range(len(self.card)):
+            if self.card[i] is None:
+                print('--', end='')
+            elif self.card[i] == 0:
+                print('  ', end='')
+            elif self.card[i] < 10:
+                print(f' {self.card[i]}', end='')
+            else:
+                print(self.card[i], end='')
+            print() if i + 1 in (9, 18, 27) else print(' ', end='')
+        print('-' * 26, end='\n')
 
 
 class Computer:
 
-    def __init__(self, name=' Компьютер'):
+    def __init__(self, name='Computer'):
         self.name = name
         self.randomcard = RandomCard(name)
-        self.number = self.randomcard.card_number.copy()
+        self.numbers = self.randomcard.card_numbers.copy()
         self.is_winner = False
 
-    def motion(self, num):
-        if num in self.randomcard.card_number:
-            self.randomcard.modify(num)
-            self.number.remove(num)
-            self.is_winner = not self.number
+    def motion(self, number):
+
+        if number in self.randomcard.card_numbers:
+            self.randomcard.modify(number)
+            self.numbers.remove(number)
+            self.is_winner = not self.numbers
 
     def stats(self):
-        print(f'{self.name}. Осталось {len(self.number)} чисел : {self.number}')
+        print(f'{self.name}. Осталось {len(self.numbers)} чисел : {self.numbers}')
 
 
 class User(Computer):
@@ -77,56 +78,57 @@ class User(Computer):
         self.is_looser = False
         self.answers = ['y', 'n']
 
-    def motion(self, num):
+    def motion(self, number):
         answer = input(f'{self.name}, зачеркнуть цифру? (y/n) ')
         while answer not in self.answers:
             answer = input('Не понял вас... Зачеркнуть цифру? (y/n) ')
         if answer == 'y':
-            if num in self.randomcard.card_number:
-                self.randomcard.modify(num)
-                self.number.remove(num)
-                self.is_winner = not self.number
+            if number in self.randomcard.card_numbers:
+                self.randomcard.modify(number)
+                self.numbers.remove(number)
+                self.is_winner = not self.numbers
             else:
                 self.is_looser = True
         elif answer == 'n':
-            if num in self.randomcard.card_number:
+            if number in self.randomcard.card_numbers:
                 self.is_looser = True
 
 
 class Game:
+
     def __init__(self):
-        self.num_users = 0
-        self.num_computers = 0
+        self.number_users = 0
+        self.number_computers = 0
         self.players = {}
         self.bag = Bag()
         self.winners = []
         self.losers = []
 
-    def generate_players(self, num_computers, num_users):
+    def generate_players(self, number_computers, number_users):
 
-        for i in range(num_computers):
+        for i in range(number_computers):
             pl_name = f'computer-{i + 1}'
             self.players[pl_name] = Computer(pl_name)
 
-        for i in range(num_users):
+        for i in range(number_users):
             pl_name = f'user-{i + 1}'
             self.players[pl_name] = User(pl_name)
 
-    def run(self, num_computers, num_users):
-        self.num_computers = num_computers
-        self.num_users = num_users
+    def run(self, number_computers, number_users):
+        self.number_computers = number_computers
+        self.number_users = number_users
 
-        self.generate_players(num_computers, num_users)
+        self.generate_players(number_computers, number_users)
         self.cards_show()
 
         while True:
-            num = self.bag.next()
+            number = self.bag.next()
 
-            print(f'Из мешка вынут боченок номер {num}!')
+            print(f'Из мешка вынут боченок номер {number}!')
 
-            self.step(num)
+            self.motion(number)
 
-            if self.num_users == 0 and self.num_computers == 0:
+            if self.number_users == 0 and self.number_computers == 0:
                 print('\nИГРА ОКОНЧЕНА')
                 break
 
@@ -140,17 +142,17 @@ class Game:
             else:
                 print('Игра продолжается...\n')
 
-    def step(self, num):
+    def motion(self, number):
         for player in self.players.values():
-            player.step(num)
+            player.motion(number)
             if isinstance(player, User):
                 if player.is_looser:
                     print(f'\nСОЖАЛЕЮ, {player.name}, но ВЫ ПРОИГРАЛИ... Нужно быть внимательнее!')
-                    self.num_users -= 1
-                    # заносим лузеров в список для удаления из словаря игроков
+                    self.number_users -= 1
+                    # заносим проигравших в список для удаления из словаря игроков
                     self.losers.append(player)
                     # break
-        # удаляем лузеров
+        # удаляем проигравших
         for loser in self.losers:
             self.players.pop(loser.name)
         # удаляем список проигравших, т.к. мы их только что удалили
