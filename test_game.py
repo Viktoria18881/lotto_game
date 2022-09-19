@@ -6,13 +6,13 @@ class TestBag (unittest.TestCase):
 
     def test_bag_unit(self):
         bag = Bag()
-        assert min(bag.numbers) > 0
-        assert max(bag.numbers) < 91
-        assert len(bag.numbers) == 90
+        assert min(bag.nums) > 0
+        assert max(bag.nums) < 91
+        assert len(bag.nums) == 90
 
     def test_bag_next(self):
         bag = Bag()
-        assert bag.numbers[-1] == bag.next()
+        assert bag.nums[-1] == bag.next()
 
 
 class TestRandomCard (unittest.TestCase):
@@ -22,23 +22,23 @@ class TestRandomCard (unittest.TestCase):
 
         assert randomcard.player_name == 'Vika'
 
-        assert min(randomcard.card_numbers) > 0
-        assert max(randomcard.card_numbers) < 91
-        assert len(randomcard.card_numbers) == 15
+        assert min(randomcard.randomcard_nums) > 0
+        assert max(randomcard.randomcard_nums) < 91
+        assert len(randomcard.randomcard_nums) == 15
 
         assert min(randomcard.place_idx) >= 0
         assert max(randomcard.place_idx) < 27
         assert len(randomcard.place_idx) == 15
 
-        assert len(randomcard.card.items()) == 27
+        assert len(randomcard.randomcard.items()) == 27
 
     def test_card_modify(self):
         randomcard = RandomCard('Vika')
 
-        assert randomcard.card[randomcard.place_idx[0]] == randomcard.card_numbers[0]
+        assert randomcard.randomcard[randomcard.place_idx[0]] == randomcard.randomcard_nums[0]
 
-        randomcard.modify(randomcard.card_numbers[0])
-        assert randomcard.card[randomcard.place_idx[0]] is None
+        randomcard.modify(randomcard.randomcard_nums[0])
+        assert randomcard.randomcard[randomcard.place_idx[0]] is None
 
 
 class TestComputer (unittest.TestCase):
@@ -55,9 +55,9 @@ class TestComputer (unittest.TestCase):
         assert computer.randomcard.player_name == 'Computer'
         del computer
 
-    def test_computer_numbers(self):
+    def test_computer_nums(self):
         computer = Computer()
-        assert computer.numbers == computer.randomcard.card_numbers
+        assert computer.nums == computer.randomcard.randomcard_nums
         del computer
 
     def test_computer_is_winner(self):
@@ -67,19 +67,19 @@ class TestComputer (unittest.TestCase):
 
     def test_computer_motion(self):
         computer = Computer()
-        number = computer.numbers[0]
-        assert number in computer.numbers
-        computer.motion(number)
-        assert number not in computer.numbers
+        num = computer.nums[0]
+        assert num in computer.nums
+        computer.motion(num)
+        assert num not in computer.nums
         del computer
 
     def test_computer_stats(self):
         computer = Computer()
         assert bool(computer.name) is True
         assert type(computer.name) is str
-        assert len(computer.numbers) >= 0
-        assert type(computer.numbers) is list
-        assert type(computer.numbers[0]) is int
+        assert len(computer.nums) >= 0
+        assert type(computer.nums) is list
+        assert type(computer.nums[0]) is int
         del computer
 
 
@@ -101,11 +101,11 @@ class TestGame (unittest.TestCase):
 
     def test_game_init(self):
         game = Game()
-        assert game.number_users == 0
-        assert game.number_computers == 0
+        assert game.num_users == 0
+        assert game.num_computers == 0
         assert game.players == {}
         assert isinstance(game.bag, Bag)
-        assert len(game.bag.numbers) == 90
+        assert len(game.bag.nums) == 90
         assert game.winners == game.losers
 
     def test_game_generate_players(self):
